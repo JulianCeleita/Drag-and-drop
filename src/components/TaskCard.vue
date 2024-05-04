@@ -7,10 +7,11 @@ const props = defineProps({
     task: Object,
 });
 
-const { emit } = defineEmits();
+const emit = defineEmits(['deleteTask']);
 
 const deleteTask = () => {
     emit('deleteTask', props.task.id);
+    console.log('Task deleted', props.task.id);
 };
 
 </script>

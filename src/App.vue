@@ -50,7 +50,8 @@ const addTask = () => {
 
 // Delete a task
 const deleteTask = (taskId) => {
-  items.value = items.value.filter((task) => task.id !== taskId);
+  sortedItems.value = sortedItems.value.filter((task) => task.id !== taskId);
+  console.log('Task deleted from father', taskId);
 }
 
 </script>
