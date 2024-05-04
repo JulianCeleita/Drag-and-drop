@@ -5,33 +5,29 @@ import TaskCard from './components/TaskCard.vue';
 
 // Define all the refs
 const items = ref([
-  { id: 1, label: 'Create app with Vue and Vite', done: false },
-  { id: 2, label: 'Add drag and drop functionality', done: false },
-  { id: 3, label: 'Style the app', done: false },
-  { id: 4, label: 'Add a new task', done: false },
-  { id: 5, label: 'Remove a task', done: false },
-  { id: 6, label: 'Mark a task as done', done: false },
-  { id: 7, label: 'Clear all tasks', done: false },
-  { id: 8, label: 'Add a counter', done: false },
-  { id: 9, label: 'Add a timer', done: false },
-  { id: 10, label: 'Add a form', done: false },
-  { id: 11, label: 'Add a modal', done: false },
-  { id: 12, label: 'Add a carousel', done: false },
-  { id: 13, label: 'Add a slider', done: false },
-  { id: 14, label: 'Add a progress bar', done: false },
-  { id: 15, label: 'Add a chart', done: false },
-  { id: 16, label: 'Add a map', done: false },
-  { id: 17, label: 'Add a table', done: false },
-  { id: 18, label: 'Add a list', done: false },
-  { id: 19, label: 'Add a card', done: false },
-  { id: 20, label: 'Add a dropdown', done: false },
-  { id: 21, label: 'Add a menu', done: false },
-  { id: 22, label: 'Add a sidebar', done: false },
-  { id: 23, label: 'Add a navbar', done: false },
-  { id: 24, label: 'Add a footer', done: false },
-  { id: 25, label: 'Add a search bar', done: false },
+  { id: 2, label: 'Add drag and drop functionality', done: false, assigned: 'Julian' },
+  { id: 3, label: 'Style the app', done: false, assigned: 'Julian' },
+  { id: 6, label: 'Mark a task as done', done: false, assigned: 'Julian' },
+  { id: 7, label: 'Clear all tasks', done: false, assigned: 'Julian' },
+  { id: 8, label: 'Add a counter', done: false, assigned: 'Julian' },
+  { id: 9, label: 'Add a timer', done: false, assigned: 'Julian' },
+  { id: 10, label: 'Add a form', done: false, assigned: 'Julian' },
+  { id: 11, label: 'Add a modal', done: false, assigned: 'Julian' },
+  { id: 14, label: 'Add a progress bar', done: false, assigned: 'Julian' },
+  { id: 19, label: 'Edit a card', done: false, assigned: 'Heiner' },
+  { id: 20, label: 'Add a dropdown', done: false, assigned: 'Heiner' },
+  { id: 21, label: 'Add a menu', done: false, assigned: 'Heiner' },
+  { id: 22, label: 'Add a sidebar', done: false, assigned: 'Heiner' },
+  { id: 23, label: 'Add a navbar', done: false, assigned: 'Julian' },
+  { id: 24, label: 'Add a footer', done: false, assigned: 'Julian' },
+  { id: 25, label: 'Add a search bar', done: false, assigned: 'Julian' },
+  { id: 26, label: 'Add completed view and button', done: false, assigned: 'Julian'},
+  { id: 27, label: 'Add backlog view', done: false, assigned: 'Julian' },
 ]);
 const newTaskLabel = ref('');
+const newAssignated = ref('');
+
+console.log('Items', items.value);
 
 // Sort the items by id
 const sortedItems = ref(items.value.slice().sort((a, b) => b.id - a.id));
@@ -39,13 +35,16 @@ const sortedItems = ref(items.value.slice().sort((a, b) => b.id - a.id));
 // Add a new task
 const addTask = () => {
   const newTaskDeclared = newTaskLabel.value.trim();
+  const newAssignatedDeclared = newAssignated.value.trim() || '';
   if (newTaskDeclared) {
-    const newTask = { id: items.value.length + 1, label: newTaskDeclared, done: false };
+    const lastId = items.value[items.value.length - 1]?.id || 0;
+    const newTask = { id: lastId + 1, label: newTaskDeclared, done: false, assigned: newAssignatedDeclared};
     items.value.push(newTask);
     sortedItems.value = items.value.slice().sort((a, b) => b.id - a.id);
     newTaskLabel.value = '';
-    console.log(sortedItems.value)
+    newAssignated.value = '';
   }
+  console.log('All tasks', items.value);
 }
 
 // Delete a task
@@ -63,6 +62,7 @@ const deleteTask = (taskId) => {
         <h1 class="title">Drag and Drop</h1>
         <div class="button-wrapper">
           <input v-model="newTaskLabel" type="text" placeholder="Add your new task here for today" />
+          <input v-model="newAssignated" type="text" placeholder="Assigned to the task">
           <button @click="addTask">Create task</button>
         </div>
       </div>
