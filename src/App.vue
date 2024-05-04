@@ -60,11 +60,11 @@ const deleteTask = (taskId) => {
     <header>
       <div class="wrapper">
         <h1 class="title">Drag and Drop</h1>
-        <div class="button-wrapper">
-          <input v-model="newTaskLabel" type="text" placeholder="Add your new task here for today" />
-          <input v-model="newAssignated" type="text" placeholder="Assigned to the task">
-          <button @click="addTask">Create task</button>
-        </div>
+        <form @submit.prevent="addTask" class="button-wrapper">
+          <input v-model="newTaskLabel" type="text" placeholder="Add new task for today" />
+          <input v-model="newAssignated" type="text" placeholder="Assigned to task">
+          <button type="submit">Create task</button>
+        </form>
       </div>
     </header>
 

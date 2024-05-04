@@ -18,7 +18,8 @@ const deleteTask = () => {
 
 <template>
     <div class="task-card">
-        <p>{{ task.label }}</p>
+        <h3>{{ task.label }}</h3>
+        <p>{{ task.assigned }}</p>
         <button>Done</button>
         <button @click="deleteTask">Delete</button>
     </div>
