@@ -10,6 +10,8 @@ const newAssignated = ref('');
 
 // Get the initial state to the tasks
 const notStartedTask = ref(getState().notStarted.sort((a, b) => b.id - a.id));
+const inProgressTask = ref(getState().inProgress);
+const completedTask = ref(getState().completed);
 
 // Add a new task
 const addTask = () => {
@@ -33,8 +35,36 @@ const addTask = () => {
 
 // Delete a task
 const deleteTask = (taskId) => {
+  const deletedTask = notStartedTask.value.find((task) => task.id === taskId);
   notStartedTask.value = notStartedTask.value.filter((task) => task.id !== taskId);
   console.log('Task deleted from father', taskId);
+  // move the task to the inProgress column
+  setState((state) => ({
+    ...state,
+    inProgress: [...state.inProgress, deletedTask],
+  }));
+  inProgressTask.value = [...inProgressTask.value, deletedTask];
+  console.log('Task moved to inProgress', taskId);
+  console.log('inProgress tasks', inProgressTask.value);
+}
+
+// Drop and drag tasks
+const dragStart = (taskId) => (event) => {
+  event.dataTransfer.setData('taskId', taskId);
+}
+
+const dropTask = (targetColumn) => (event) => {
+  const taskId = event.dataTransfer.getData('taskId');
+  const task = notStartedTask.value.find((task) => task.id === parseInt(taskId));
+  if (task) {
+    notStartedTask.value = notStartedTask.value.filter((task) => task.id !== parseInt(taskId));
+    setState((state) => ({
+      ...state,
+      [targetColumn]: [...state[targetColumn], task],
+    }));
+    targetColumn === 'inProgress' ? inProgressTask.value = [...inProgressTask.value, task] : completedTask.value = [...completedTask.value, task];
+    console.log('Task dropped', taskId);
+  }
 }
 
 </script>
@@ -53,11 +83,15 @@ const deleteTask = (taskId) => {
     </header>
 
     <main class="task-list">
-      <div class="column">
+      <div class="task-card">
         <TaskCard v-for="task in notStartedTask" :key="task.id" :task="task" @deleteTask="deleteTask" />
       </div>
-      <div class="column"></div>
-      <div class="column"></div>
+      <div class="column">
+        <TaskCard v-for="task in inProgressTask" :key="task.id" :task="task" @deleteTask="deleteTask" />
+      </div>
+      <div class="column">
+        <TaskCard v-for="task in getState().completed" :key="task.id" :task="task" @deleteTask="deleteTask" />
+      </div>
     </main>
   </div>
 </template>
@@ -110,5 +144,13 @@ button {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.task-card {
+  cursor: grab;
+}
+
+.task-card:hover {
+  background-color: #f0f0f0;
 }
 </style>
