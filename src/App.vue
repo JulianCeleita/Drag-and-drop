@@ -2,49 +2,33 @@
 
 import { ref } from 'vue';
 import TaskCard from './components/TaskCard.vue';
+import { getState, setState, subscribe } from './store/useStatusTasksStore';
 
 // Define all the refs
-const items = ref([
-  { id: 2, label: 'Add drag and drop functionality', done: false, assigned: 'Julian' },
-  { id: 3, label: 'Style the app', done: false, assigned: 'Julian' },
-  { id: 6, label: 'Mark a task as done', done: false, assigned: 'Julian' },
-  { id: 7, label: 'Clear all tasks', done: false, assigned: 'Julian' },
-  { id: 8, label: 'Add a counter', done: false, assigned: 'Julian' },
-  { id: 9, label: 'Add a timer', done: false, assigned: 'Julian' },
-  { id: 10, label: 'Add a form', done: false, assigned: 'Julian' },
-  { id: 11, label: 'Add a modal', done: false, assigned: 'Julian' },
-  { id: 14, label: 'Add a progress bar', done: false, assigned: 'Julian' },
-  { id: 19, label: 'Edit a card', done: false, assigned: 'Heiner' },
-  { id: 20, label: 'Add a dropdown', done: false, assigned: 'Heiner' },
-  { id: 21, label: 'Add a menu', done: false, assigned: 'Heiner' },
-  { id: 22, label: 'Add a sidebar', done: false, assigned: 'Heiner' },
-  { id: 23, label: 'Add a navbar', done: false, assigned: 'Julian' },
-  { id: 24, label: 'Add a footer', done: false, assigned: 'Julian' },
-  { id: 25, label: 'Add a search bar', done: false, assigned: 'Julian' },
-  { id: 26, label: 'Add completed view and button', done: false, assigned: 'Julian'},
-  { id: 27, label: 'Add backlog view', done: false, assigned: 'Julian' },
-]);
 const newTaskLabel = ref('');
 const newAssignated = ref('');
 
-console.log('Items', items.value);
-
-// Sort the items by id
-const sortedItems = ref(items.value.slice().sort((a, b) => b.id - a.id));
+// Get the initial state to the tasks
+const sortedItems = ref(getState().notStarted.sort((a, b) => b.id - a.id));
 
 // Add a new task
 const addTask = () => {
   const newTaskDeclared = newTaskLabel.value.trim();
   const newAssignatedDeclared = newAssignated.value.trim() || '';
   if (newTaskDeclared) {
-    const lastId = items.value[items.value.length - 1]?.id || 0;
-    const newTask = { id: lastId + 1, label: newTaskDeclared, done: false, assigned: newAssignatedDeclared};
-    items.value.push(newTask);
-    sortedItems.value = items.value.slice().sort((a, b) => b.id - a.id);
+    const lastId = sortedItems.value.length > 0 ? sortedItems.value[0].id : 0;
+    const newTask = { id: lastId + 1, label: newTaskDeclared, done: false, assigned: newAssignatedDeclared };
+    setState((state) => ({
+      ...state,
+      notStarted: [...state.notStarted, newTask],
+    }));
+    // Update the sortedItems ordered by id
+    sortedItems.value = [...sortedItems.value, newTask].sort((a, b) => b.id - a.id);
     newTaskLabel.value = '';
     newAssignated.value = '';
+    console.log('Task added', newTask);
   }
-  console.log('All tasks', items.value);
+  console.log('All tasks', sortedItems.value);
 }
 
 // Delete a task
@@ -61,7 +45,7 @@ const deleteTask = (taskId) => {
       <div class="wrapper">
         <h1 class="title">Drag and Drop</h1>
         <form @submit.prevent="addTask" class="button-wrapper">
-          <input v-model="newTaskLabel" type="text" placeholder="Add new task for today" />
+          <input v-model="newTaskLabel" type="text" placeholder="Add new task for today" required>
           <input v-model="newAssignated" type="text" placeholder="Assigned to task">
           <button type="submit">Create task</button>
         </form>
