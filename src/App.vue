@@ -9,31 +9,31 @@ const newTaskLabel = ref('');
 const newAssignated = ref('');
 
 // Get the initial state to the tasks
-const sortedItems = ref(getState().notStarted.sort((a, b) => b.id - a.id));
+const notStartedTask = ref(getState().notStarted.sort((a, b) => b.id - a.id));
 
 // Add a new task
 const addTask = () => {
   const newTaskDeclared = newTaskLabel.value.trim();
   const newAssignatedDeclared = newAssignated.value.trim() || '';
   if (newTaskDeclared) {
-    const lastId = sortedItems.value.length > 0 ? sortedItems.value[0].id : 0;
+    const lastId = notStartedTask.value.length > 0 ? notStartedTask.value[0].id : 0;
     const newTask = { id: lastId + 1, label: newTaskDeclared, done: false, assigned: newAssignatedDeclared };
     setState((state) => ({
       ...state,
       notStarted: [...state.notStarted, newTask],
     }));
-    // Update the sortedItems ordered by id
-    sortedItems.value = [...sortedItems.value, newTask].sort((a, b) => b.id - a.id);
+    // Update the notStartedTask ordered by id
+    notStartedTask.value = [...notStartedTask.value, newTask].sort((a, b) => b.id - a.id);
     newTaskLabel.value = '';
     newAssignated.value = '';
     console.log('Task added', newTask);
   }
-  console.log('All tasks', sortedItems.value);
+  console.log('All tasks', notStartedTask.value);
 }
 
 // Delete a task
 const deleteTask = (taskId) => {
-  sortedItems.value = sortedItems.value.filter((task) => task.id !== taskId);
+  notStartedTask.value = notStartedTask.value.filter((task) => task.id !== taskId);
   console.log('Task deleted from father', taskId);
 }
 
@@ -54,7 +54,7 @@ const deleteTask = (taskId) => {
 
     <main class="task-list">
       <div class="column">
-        <TaskCard v-for="task in sortedItems" :key="task.id" :task="task" @deleteTask="deleteTask" />
+        <TaskCard v-for="task in notStartedTask" :key="task.id" :task="task" @deleteTask="deleteTask" />
       </div>
       <div class="column"></div>
       <div class="column"></div>
